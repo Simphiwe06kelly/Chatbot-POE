@@ -1,0 +1,48 @@
+name: .NET Build & Validate
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build on Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore CybersecurityAwarenessBot/CybersecurityAwarenessBot.csproj
+
+      - name: Build in Release configuration
+        run: dotnet build CybersecurityAwarenessBot/CybersecurityAwarenessBot.csproj --no-restore --configuration Release
+
+      - name: Verify build artifact exists
+        shell: pwsh
+        run: |
+          $exe = "CybersecurityAwarenessBot/bin/Release/net8.0-windows/CybersecurityAwarenessBot.exe"
+          if (Test-Path $exe) {
+            Write-Host "Build artifact verified: $exe"
+          } else {
+            Write-Error "Build artifact not found at expected path: $exe"
+            exit 1
+          }
+
+      - name: Display build summary
+        shell: pwsh
+        run: |
+          Write-Host "======================================"
+          Write-Host " CybersecurityAwarenessBot"
+          Write-Host " Build: SUCCESS"
+          Write-Host " Config: Release"
+          Write-Host " Runner: windows-latest"
+          Write-Host "======================================"
