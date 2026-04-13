@@ -1,0 +1,65 @@
+name: .NET Build & Validate
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build on Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: List all files (DEBUG - shows what files exist)
+        run: dir /s
+        shell: cmd
+
+      - name: Find and restore project file
+        run: |
+          for /r . %%i in (*.csproj) do (
+            echo Found: %%i
+            dotnet restore "%%i"
+            dotnet build "%%i" --configuration Release --no-restore
+          )
+        shell: cmd
+
+      - name: If no csproj found, create one
+        if: failure()
+        run: |
+          echo "<Project Sdk=\"Microsoft.NET.Sdk\">" > temp.csproj
+          echo "  <PropertyGroup>" >> temp.csproj
+          echo "    <OutputType>Exe</OutputType>" >> temp.csproj
+          echo "    <TargetFramework>net8.0</TargetFramework>" >> temp.csproj
+          echo "    <ImplicitUsings>enable</ImplicitUsings>" >> temp.csproj
+          echo "    <Nullable>enable</Nullable>" >> temp.csproj
+          echo "  </PropertyGroup>" >> temp.csproj
+          echo "</Project>" >> temp.csproj
+          move temp.csproj CybersecurityAwarenessBot.csproj
+          dotnet restore CybersecurityAwarenessBot.csproj
+          dotnet build CybersecurityAwarenessBot.csproj --configuration Release
+        shell: cmd
+
+      - name: Verify build output exists
+        shell: pwsh
+        run: |
+          $exes = Get-ChildItem -Recurse -Filter "*.exe" -Path "." |
+                  Where-Object { $_.FullName -like "*Release*" }
+          if ($exes.Count -gt 0) {
+            Write-Host "======================================"
+            Write-Host " Build: SUCCESS"
+            Write-Host "======================================"
+            $exes | ForEach-Object { Write-Host "  $($_.FullName)" }
+          } else {
+            Write-Error "No Release .exe found."
+            exit 1
+          }
