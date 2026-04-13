@@ -1,0 +1,8 @@
+C:\Users\kelly\source\repos\Chatbot\Chatbot\obj\Debug\Chatbot.csproj.AssemblyReference.cache
+C:\Users\kelly\source\repos\Chatbot\Chatbot\obj\Debug\Chatbot.csproj.CoreCompileInputs.cache
+C:\Users\kelly\source\repos\Chatbot\Chatbot\bin\Debug\Chatbot.exe.config
+C:\Users\kelly\source\repos\Chatbot\Chatbot\bin\Debug\Chatbot.exe
+C:\Users\kelly\source\repos\Chatbot\Chatbot\bin\Debug\Chatbot.pdb
+C:\Users\kelly\source\repos\Chatbot\Chatbot\obj\Debug\Chatbot.exe
+C:\Users\kelly\source\repos\Chatbot\Chatbot\obj\Debug\Chatbot.pdb
+C:\Users\kelly\source\repos\Chatbot\Chatbot\bin\Debug\greeting.wav
